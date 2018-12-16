@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Prism.Behaviors;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -13,8 +14,8 @@ namespace Prism.Navigation.Xaml
     {
         private IServiceProvider ServiceProvider;
 
-        private Element _targetElement;
-        protected Element TargetElement
+        private BindableObject _targetElement;
+        protected BindableObject TargetElement
         {
             get
             {
@@ -34,7 +35,7 @@ namespace Prism.Navigation.Xaml
         {
             protected internal get
             {
-                if(_sourcePage == null)
+                if (_sourcePage == null)
                 {
                     Initialize();
                 }
@@ -60,7 +61,7 @@ namespace Prism.Navigation.Xaml
                 var navigationService = Navigation.GetNavigationService(SourcePage);
                 await HandleNavigation(parameters, navigationService);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log(ex);
             }
@@ -99,9 +100,18 @@ namespace Prism.Navigation.Xaml
             if (valueTargetProvider == null)
                 throw new ArgumentException("The ServiceProvider did not provide a 'IProvideValueTarget'");
 
-            TargetElement = valueTargetProvider.TargetObject as Element;
+            switch (valueTargetProvider.TargetObject)
+            {
+                case EventToCommandBehavior behavior:
+                    TargetElement = behavior.AssociatedObject;
+                    break;
+                case BindableObject element:
+                    TargetElement = element;
+                    break;
 
-            if (TargetElement is null)
+            }
+
+            if (_targetElement is null)
                 throw new ArgumentNullException(nameof(TargetElement));
 
             Navigation.SetRaiseCanExecuteChangedInternal(TargetElement, RaiseCanExecuteChanged);
@@ -114,7 +124,7 @@ namespace Prism.Navigation.Xaml
             {
                 SourcePage = parentPage;
 
-                if(parentPage.Parent is MasterDetailPage mdp 
+                if (parentPage.Parent is MasterDetailPage mdp
                     && mdp.Master == parentPage)
                 {
                     SourcePage = mdp;
