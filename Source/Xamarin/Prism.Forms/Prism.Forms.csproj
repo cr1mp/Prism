@@ -19,10 +19,11 @@
     <VersionSuffix Condition=" '$(PRISM_RELEASE)' == '' And '$(PRISM_FORMS_VERSION)' == '' And '$(BUILD_BUILDID)' != '' And !'$(IS_RELEASE)' ">ci</VersionSuffix>
     <VersionSuffix Condition=" '$(PRISM_RELEASE)' == '' And '$(PRISM_FORMS_VERSION)' == '' And '$(IS_PREVIEW)' ">pre</VersionSuffix>
     <RootNamespace>Prism</RootNamespace>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1009999" />
+    <PackageReference Include="Xamarin.Forms" Version="3.6.0.220655" />
   </ItemGroup>
 
   <ItemGroup>
